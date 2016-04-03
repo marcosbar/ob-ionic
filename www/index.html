@@ -23,7 +23,7 @@
     <script src="js/app.js"></script>
     <script src="js/controller.js"></script>
   </head>
-  <body ng-app="starter" ng-controller="main" ng-init="getConfigs()">
+  <body ng-app="starter" ng-controller="main" ng-init="setUpConfigs()">
 
   <ion-pane>
     <ion-header-bar class="bar-stable">
@@ -33,11 +33,23 @@
       </button>
     </ion-header-bar>
     <ion-content>
-      <div class="list card" ng-repeat="config in configs track by $index">
-        <div class="item item-body">
-          <strong><span ng-bind="config.title"></span></strong>
+        <div>
+          <ion-radio ng-repeat="config in configs track by $index" ng-model="selectedIndex" ng-value="{{$index}}" ng-click="selectConfig({{$index}})">{{config.title}}</ion-radio>
         </div>
-      </div>
+        <div ng-if="config">
+          <div>
+            <h3>{{config.title}}</h3>
+          </div>
+          <div>
+            <strong><span>Total: {{current.cash}}</span></strong>
+          </div>
+          <div>
+            <span>Open at: {{current.created}}</span>
+          </div>
+          <div>
+            <span>Number of sales: {{current.numberOfSales}}</span>
+          </div>
+        </div>
     </ion-content>
   </ion-pane>
 

@@ -1,11 +1,18 @@
 angular.module('starter', ['ionic', 'LocalStorageModule'])
-.controller('main', function ($scope, $ionicModal, localStorageService) {
+.controller('main', function ($scope, $ionicModal, localStorageService, $http, $interval) {
 
 var configKey = 'configs';
 
-$scope.configs = [];
 
-$scope.config = {};
+function getCurrentCash(){
+  var url = $scope.config.url+"/cash/current";
+  var config = $scope.config;
+  $http.get(url).then( function(response) {
+           $scope.current = response.data;
+  },function(response) {
+      $scope.config = null;
+  });
+}
 
 $ionicModal.fromTemplateUrl('new-config.html', {
     scope: $scope,
@@ -22,10 +29,17 @@ $scope.closeNewConfigModal = function() {
    $scope.newConfig.hide();
 };
 
+$interval(function(){
+  getCurrentCash();
+},30000);
 
-$scope.getConfigs = function () {
-  if (localStorageService.get(configKey)) {
+$scope.setUpConfigs = function(){
+ if (localStorageService.get(configKey)) {
        $scope.configs = localStorageService.get(configKey);
+       if(!$scope.config){
+          $scope.config = $scope.configs[0];
+          getCurrentCash();
+       }
   } else {
        $scope.configs = [];
   }
@@ -43,12 +57,9 @@ $scope.removeConfig = function () {
   localStorageService.set(configKey, $scope.config);
 }
 
-$scope.getCurrentConfig = function () {
-//  getConfigs().foreach{ config ->
-//    {if(config.current){
-//        $scope.config = config
-//      }
-//    }
-//  }
+$scope.selectConfig = function(index){
+var configs = $scope.configs;
+  $scope.config = $scope.configs[index];
+  getCurrentCash();
 }
 });
